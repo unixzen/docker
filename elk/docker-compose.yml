@@ -1,0 +1,57 @@
+version: '3.1'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.2.0
+    container_name: Elasticsearch
+    restart: unless-stopped
+    network_mode: host
+    ports:
+        - "9200:9200"
+        - "9300:9300"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+            #      - discovery.type=single-node
+            #      - bootstrap.memory_lock=true
+        ELASTIC_PASSWORD: "changeme"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./elasticsearch/data:/usr/share/elasticsearch/data
+      - ./data/elasticsearch/log:/var/log/elasticsearch
+    tmpfs:
+        - /run
+        - /tmp
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.2.0
+    container_name: Logstash
+    restart: unless-stopped
+    network_mode: host
+    ports:
+        - "5000:5000"
+        - "9600:9600"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+    tmpfs:
+        - /run
+          #- /tmp
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.2.0
+    container_name: Kibana
+    restart: unless-stopped
+    network_mode: host
+    ports:
+        - "5601:5601"
+    depends_on: 
+      - logstash
+      - elasticsearch
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    tmpfs:
+        - /run
+        - /tmp
