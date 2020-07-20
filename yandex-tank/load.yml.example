@@ -1,0 +1,20 @@
+overload:
+  enabled: true
+  package: yandextank.plugins.DataUploader
+  token_file: "token.txt" # Необходим токен для получения красивых графиков https://overload.yandex.net/login/?next=/
+
+phantom:
+  address: test.domain:80 # Target's address and port
+  load_profile:
+    load_type: rps
+    schedule: const(30000, 10m)
+  header_http: "1.1"
+  headers:
+    - "[Host: test.domain]"
+  uris: 
+    - "/"
+    
+telegraf:
+  enabled: false
+
+

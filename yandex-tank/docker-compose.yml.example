@@ -1,0 +1,8 @@
+version: '3.0'
+services:
+  tank:
+    image: direvius/yandex-tank
+    container_name: tank
+    volumes:
+      - "/docker/yandex-tank:/var/loadtest"
+
